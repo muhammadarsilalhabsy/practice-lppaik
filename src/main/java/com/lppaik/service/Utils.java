@@ -1,6 +1,8 @@
 package com.lppaik.service;
 
+import com.lppaik.entity.BTQDetails;
 import com.lppaik.entity.User;
+import com.lppaik.model.response.BTQResponse;
 import com.lppaik.model.response.UserResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -44,4 +46,11 @@ public class Utils {
             .build();
   }
 
+  public BTQResponse detailToBTQResponse(BTQDetails detail){
+    return BTQResponse.builder()
+            .id(detail.getId())
+            .day(detail.getDay())
+            .activity(detail.getActivity())
+            .build();
+  }
 }

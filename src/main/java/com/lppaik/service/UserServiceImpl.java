@@ -1,13 +1,11 @@
 package com.lppaik.service;
 
-import com.lppaik.entity.Gender;
-import com.lppaik.entity.Jurusan;
-import com.lppaik.entity.Role;
-import com.lppaik.entity.User;
+import com.lppaik.entity.*;
 import com.lppaik.model.request.RegisterUserRequest;
 import com.lppaik.model.request.SearchUserRequest;
 import com.lppaik.model.request.UpdateUserRequest;
 import com.lppaik.model.response.UserResponse;
+import com.lppaik.repository.BTQControlBookRepository;
 import com.lppaik.repository.UserRepository;
 import com.lppaik.security.BCrypt;
 import jakarta.persistence.criteria.Join;
@@ -34,10 +32,13 @@ public class UserServiceImpl implements UserService {
   private final Utils utils;
   private final JurusanServiceImpl jurusanService;
 
-  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService) {
+  private final BTQControlBookRepository bookRepository;
+
+  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService, BTQControlBookRepository bookRepository) {
     this.userRepository = userRepository;
     this.utils = utils;
     this.jurusanService = jurusanService;
+    this.bookRepository = bookRepository;
   }
 
   @Override
@@ -60,8 +61,14 @@ public class UserServiceImpl implements UserService {
     if(Objects.nonNull(request.getGender())){
       user.setGender(Gender.valueOf(request.getGender()));
     }
-
     userRepository.save(user);
+
+    BTQControlBook book = new BTQControlBook();
+    book.setId(request.getUsername());
+    book.setStatus(false);
+
+    bookRepository.save(book);
+
   }
 
   @Override

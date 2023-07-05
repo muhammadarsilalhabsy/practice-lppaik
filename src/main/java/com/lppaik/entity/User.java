@@ -37,7 +37,7 @@ public class User {
 
   @OneToOne
   @PrimaryKeyJoinColumn(name="username", referencedColumnName = "id")
-  private BTQControlBook book;
+  private BTQControlBook btqBook;
 
   @Column(unique = true)
   private String token;

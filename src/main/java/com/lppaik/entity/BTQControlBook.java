@@ -20,13 +20,12 @@ public class BTQControlBook {
   @Id
   private String id;
 
-
   private Boolean status;
 
-  @OneToOne(mappedBy = "book")
+  @OneToOne(mappedBy = "btqBook")
   private User user;
 
-  @OneToMany(mappedBy = "books")
+  @OneToMany(mappedBy = "book")
   private List<BTQDetails> details;
 
 }

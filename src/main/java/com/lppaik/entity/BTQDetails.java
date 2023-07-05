@@ -17,13 +17,14 @@ import java.util.List;
 public class BTQDetails {
 
   @Id
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   private String day;
   private String activity;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "buku_id", referencedColumnName = "id")
-  private BTQControlBook books;
+  private BTQControlBook book;
 
 
 }
