@@ -23,6 +23,10 @@ public class BTQDetails {
   private String activity;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "tutor_id", referencedColumnName = "username")
+  private User tutors;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "buku_id", referencedColumnName = "id")
   private BTQControlBook book;
 

@@ -51,6 +51,7 @@ public class Utils {
             .id(detail.getId())
             .day(detail.getDay())
             .activity(detail.getActivity())
+            .tutor(detail.getTutors().getName())
             .build();
   }
 }

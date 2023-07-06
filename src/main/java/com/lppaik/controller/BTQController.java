@@ -3,6 +3,7 @@ package com.lppaik.controller;
 import com.lppaik.entity.User;
 import com.lppaik.model.WebResponse;
 import com.lppaik.model.request.CreateBTQDetailsRequest;
+import com.lppaik.model.request.UpdateBTQDetailsRequest;
 import com.lppaik.model.response.BTQResponse;
 import com.lppaik.service.BTQDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +23,7 @@ public class BTQController {
     this.service = service;
   }
 
-  @PostMapping(path = "/{bookId}/details",
-          consumes = MediaType.APPLICATION_JSON_VALUE,
-          produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<BTQResponse> create(User user,
-                                         @RequestBody CreateBTQDetailsRequest request,
-                                         @PathVariable("bookId") String bookId){
-
-    request.setBookId(bookId);
-
-    BTQResponse response = service.create(user, request);
-
-    return WebResponse.<BTQResponse>builder()
-            .data(response)
-            .build();
-  }
-
+  // MAHASISWA
   @GetMapping(path = "/{bookId}/details",
           consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,6 +37,41 @@ public class BTQController {
             .build();
   }
 
+  // TUTOR
+  @PostMapping(path = "/tutor/{mahasiswaId}/details",
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> createDetailBTQ(User user,
+                                             @RequestBody CreateBTQDetailsRequest request,
+                                             @PathVariable("mahasiswaId") String mahasiswaId){
+    request.setBookId(mahasiswaId);
+
+    service.createForMahasiswa(user, request, mahasiswaId);
+    return WebResponse.<String>builder().data("OK").build();
+  }
+
+  // TUTOR
+  @DeleteMapping(path = "/tutor/{detailId}/details")
+  public WebResponse<String> delete(User user, @PathVariable("detailId") Long detailId){
+
+    service.delete(user, detailId);
+
+    return WebResponse.<String>builder()
+            .data("OK")
+            .build();
+  }
+
+  // TUTOR
+  @PatchMapping(path = "/tutor/{detailId}/details")
+  public WebResponse<BTQResponse> updateDetail(User user,
+                                             @RequestBody UpdateBTQDetailsRequest request,
+                                             @PathVariable("detailId") Long detailId){
+    request.setDetailId(detailId);
+
+    BTQResponse response = service.update(user, request);
+
+    return WebResponse.<BTQResponse>builder().data(response).build();
+  }
 
 
 }

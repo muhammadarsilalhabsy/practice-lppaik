@@ -3,6 +3,7 @@ package com.lppaik.controller;
 import com.lppaik.entity.User;
 import com.lppaik.model.WebResponse;
 import com.lppaik.model.request.CreateJurusanRequest;
+import com.lppaik.model.request.UpdateJurusanRequest;
 import com.lppaik.model.response.JurusanResponse;
 import com.lppaik.service.JurusanServiceImpl;
 import org.springframework.http.MediaType;
@@ -39,4 +40,30 @@ public class JurusanController {
             .data("OK")
             .build();
   }
+
+  @DeleteMapping(path = "/{jurusanId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> delete(User user, @PathVariable("jurusanId") String jurusanId){
+
+    service.delete(user, jurusanId);
+    return WebResponse.<String>builder()
+            .data("OK")
+            .build();
+  }
+
+  @PatchMapping(path = "/{jurusanId}",
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<JurusanResponse> update(User user,
+                                             @RequestBody UpdateJurusanRequest request,
+                                             @PathVariable("jurusanId") String jurusanId){
+
+    request.setId(jurusanId);
+
+    JurusanResponse response = service.update(user, request);
+
+    return  WebResponse.<JurusanResponse>builder()
+            .data(response)
+            .build();
+  }
+
 }

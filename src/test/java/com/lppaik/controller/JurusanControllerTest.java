@@ -10,6 +10,7 @@ import com.lppaik.entity.User;
 import com.lppaik.model.ErrorResponse;
 import com.lppaik.model.WebResponse;
 import com.lppaik.model.request.CreateJurusanRequest;
+import com.lppaik.model.request.UpdateJurusanRequest;
 import com.lppaik.model.response.JurusanResponse;
 import com.lppaik.repository.JurusanRepository;
 import com.lppaik.repository.UserRepository;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class JurusanControllerTest {
@@ -87,45 +89,56 @@ class JurusanControllerTest {
   @Test
   void createSuccess() throws Exception {
 
+    User tutor = new User();
+    tutor.setName("Ucok");
+    tutor.setEmail("tutor@gmail.com");
+    tutor.setUsername("1010");
+    tutor.setPassword("rahasia");
+    tutor.setToken("tutor-token");
+    tutor.setGender(Gender.MALE);
+    tutor.setRole(Role.TUTOR);
+
+    repository.save(tutor);
+
     CreateJurusanRequest request = new CreateJurusanRequest();
     request.setName("TEKNIK");
     request.setId("j4");
 
     mvc.perform(
-        post("/api/v1/jurusan")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request))
-                .header("X-API-TOKEN", "token ku"))
-        .andExpectAll(
-                status().isOk())
-        .andDo(result -> {
-          WebResponse<String> response = mapper.readValue(result.getResponse().getContentAsString(),
-                  new TypeReference<>() {
-                  });
+                    post("/api/v1/jurusan")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(request))
+                            .header("X-API-TOKEN", "tutor-token"))
+            .andExpectAll(
+                    status().isOk())
+            .andDo(result -> {
+              WebResponse<String> response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
 
-          assertNotNull(response.getData());
-          assertEquals("OK", response.getData());
+              assertNotNull(response.getData());
+              assertEquals("OK", response.getData());
 
-          Jurusan fromDb = jurusanRepository.findById("j4").orElse(null);
-          assertNotNull(fromDb);
-          assertEquals("TEKNIK", fromDb.getName());
+              Jurusan fromDb = jurusanRepository.findById("j4").orElse(null);
+              assertNotNull(fromDb);
+              assertEquals("TEKNIK", fromDb.getName());
 
-        });
+            });
   }
 
   @Test
-  void createFailed() throws Exception {
+  void createUnauthorized() throws Exception {
 
     CreateJurusanRequest request = new CreateJurusanRequest();
     request.setName("TEKNIK");
     request.setId("j4");
 
     mvc.perform(
-            post("/api/v1/jurusan")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(request)))
+                    post("/api/v1/jurusan")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(request)))
             .andExpectAll(
                     status().isUnauthorized())
             .andDo(result -> {
@@ -140,22 +153,272 @@ class JurusanControllerTest {
   }
 
   @Test
+  void createFailedBecauseRole() throws Exception {
+
+    CreateJurusanRequest request = new CreateJurusanRequest();
+    request.setName("TEKNIK");
+    request.setId("j4");
+
+    mvc.perform(
+                    post("/api/v1/jurusan")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(request))
+                            .header("X-API-TOKEN", "token ku"))
+
+            .andExpectAll(
+                    status().isUnauthorized())
+            .andDo(result -> {
+              ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertNotNull(response.getError());
+              assertEquals("Operation is not support for you role!", response.getError());
+
+            });
+  }
+
+  @Test
   void getAll() throws Exception {
 
     mvc.perform(
-      get("/api/v1/jurusan")
-              .accept(MediaType.APPLICATION_JSON)
-              .contentType(MediaType.APPLICATION_JSON))
+                    get("/api/v1/jurusan")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                    status().isOk())
+            .andDo(result -> {
+              WebResponse<List<JurusanResponse>> response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertNotNull(response.getData());
+              assertEquals(3, response.getData().size());
+
+            });
+  }
+
+  @Test
+  void deleteSuccess() throws Exception {
+
+    User tutor = new User();
+    tutor.setName("Ucok");
+    tutor.setEmail("tutor@gmail.com");
+    tutor.setUsername("1010");
+    tutor.setPassword("rahasia");
+    tutor.setToken("tutor-token");
+    tutor.setGender(Gender.MALE);
+    tutor.setRole(Role.TUTOR);
+
+    repository.save(tutor);
+
+    mvc.perform(
+                    delete("/api/v1/jurusan/j2")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-API-TOKEN", "tutor-token"))
+            .andExpectAll(
+                    status().isOk())
+            .andDo(result -> {
+              WebResponse<String> response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertNotNull(response.getData());
+              assertEquals("OK", response.getData());
+
+            });
+  }
+
+  @Test
+  void deleteFailedBecauseRole() throws Exception {
+
+    User ketua = new User();
+    ketua.setName("Ucok");
+    ketua.setEmail("ketua@gmail.com");
+    ketua.setUsername("1010");
+    ketua.setPassword("rahasia");
+    ketua.setToken("ketua-token");
+    ketua.setGender(Gender.MALE);
+    ketua.setRole(Role.KETUA);
+
+    repository.save(ketua);
+
+    mvc.perform(
+                    delete("/api/v1/jurusan/j2")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-API-TOKEN", "ketua-token"))
+            .andExpectAll(
+                    status().isUnauthorized())
+            .andDo(result -> {
+              ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertEquals("Operation is not support for you role!", response.getError());
+
+            });
+  }
+
+  @Test
+  void deleteJurusanNotFound() throws Exception {
+
+    User tutor = new User();
+    tutor.setName("Ucok");
+    tutor.setEmail("tutor@gmail.com");
+    tutor.setUsername("1010");
+    tutor.setPassword("rahasia");
+    tutor.setToken("tutor-token");
+    tutor.setGender(Gender.MALE);
+    tutor.setRole(Role.TUTOR);
+
+    repository.save(tutor);
+
+    mvc.perform(
+                    delete("/api/v1/jurusan/j5")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-API-TOKEN", "tutor-token"))
+            .andExpectAll(
+                    status().isNotFound())
+            .andDo(result -> {
+              ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertEquals("Jurusan Not Found!", response.getError());
+
+            });
+  }
+
+  @Test
+  void updateSuccess() throws Exception {
+
+    User tutor = new User();
+    tutor.setName("Ucok");
+    tutor.setEmail("tutor@gmail.com");
+    tutor.setUsername("1010");
+    tutor.setPassword("rahasia");
+    tutor.setToken("tutor-token");
+    tutor.setGender(Gender.MALE);
+    tutor.setRole(Role.TUTOR);
+
+    repository.save(tutor);
+
+    UpdateJurusanRequest request = new UpdateJurusanRequest();
+    request.setName("PERKAPALAN");
+
+    mvc.perform(
+                    patch("/api/v1/jurusan/j2")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-API-TOKEN", "tutor-token")
+                            .content(mapper.writeValueAsString(request)))
+            .andExpectAll(
+                    status().isOk())
+            .andDo(result -> {
+              WebResponse<JurusanResponse> response = mapper.readValue(result.getResponse().getContentAsString(),
+                      new TypeReference<>() {
+                      });
+
+              assertNotNull(response.getData());
+              assertEquals("PERKAPALAN", response.getData().getName());
+
+            });
+  }
+
+  @Test
+  void updateFailedBecauseRole() throws Exception {
+
+    User ketua = new User();
+    ketua.setName("Ucok");
+    ketua.setEmail("ketua@gmail.com");
+    ketua.setUsername("1010");
+    ketua.setPassword("rahasia");
+    ketua.setToken("ketua-token");
+    ketua.setGender(Gender.MALE);
+    ketua.setRole(Role.KETUA);
+
+    repository.save(ketua);
+
+    UpdateJurusanRequest request = new UpdateJurusanRequest();
+    request.setName("PERKAPALAN");
+
+    mvc.perform(
+              patch("/api/v1/jurusan/j2")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("X-API-TOKEN", "ketua-token")
+                      .content(mapper.writeValueAsString(request)))
       .andExpectAll(
-              status().isOk())
+              status().isUnauthorized())
       .andDo(result -> {
-        WebResponse<List<JurusanResponse>> response = mapper.readValue(result.getResponse().getContentAsString(),
+        ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
 
-        assertNotNull(response.getData());
-        assertEquals(3, response.getData().size());
+        assertEquals("Operation is not support for you role!", response.getError());
 
       });
   }
+
+  @Test
+  void updateUnauthorized() throws Exception {
+
+    UpdateJurusanRequest request = new UpdateJurusanRequest();
+    request.setName("PERKAPALAN");
+
+    mvc.perform(
+              patch("/api/v1/jurusan/j2")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(mapper.writeValueAsString(request)))
+      .andExpectAll(
+              status().isUnauthorized())
+      .andDo(result -> {
+        ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+
+        assertEquals("Unauthorized", response.getError());
+
+      });
+  }
+
+  @Test
+  void updateNotFound() throws Exception {
+    User tutor = new User();
+    tutor.setName("Ucok");
+    tutor.setEmail("tutor@gmail.com");
+    tutor.setUsername("1010");
+    tutor.setPassword("rahasia");
+    tutor.setToken("tutor-token");
+    tutor.setGender(Gender.MALE);
+    tutor.setRole(Role.TUTOR);
+
+    repository.save(tutor);
+
+    UpdateJurusanRequest request = new UpdateJurusanRequest();
+    request.setName("PERKAPALAN");
+
+    mvc.perform(
+              patch("/api/v1/jurusan/jxxx")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(mapper.writeValueAsString(request))
+                      .header("X-API-TOKEN", "tutor-token"))
+      .andExpectAll(
+              status().isNotFound())
+      .andDo(result -> {
+        ErrorResponse response = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+
+        assertEquals("Jurusan Not Found!", response.getError());
+
+      });
+  }
+
 }

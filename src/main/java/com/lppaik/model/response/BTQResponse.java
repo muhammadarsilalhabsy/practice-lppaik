@@ -16,4 +16,6 @@ public class BTQResponse {
   private String day;
 
   private String activity;
+
+  private String tutor;
 }
