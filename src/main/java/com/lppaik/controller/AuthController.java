@@ -1,7 +1,7 @@
 package com.lppaik.controller;
 
 import com.lppaik.entity.User;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.LoginUserRequest;
 import com.lppaik.model.response.TokenResponse;
 import com.lppaik.service.AuthServiceImpl;
@@ -29,8 +29,7 @@ public class AuthController {
 
   @DeleteMapping(
           path = "/logout",
-          produces = MediaType.APPLICATION_JSON_VALUE
-  )
+          produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<String> logout(User user){
     authServiceImpl.logout(user);
     return WebResponse.<String>builder()

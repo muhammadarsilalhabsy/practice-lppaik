@@ -1,5 +1,5 @@
 package com.lppaik.entity;
 
 public enum Role {
-  MAHASISWA, KETUA, TUTOR, ADMIN
+  MAHASISWA, KETUA, TUTOR, ADMIN, DOSEN
 }

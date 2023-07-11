@@ -1,4 +1,4 @@
-package com.lppaik.model;
+package com.lppaik.model.response;
 
 import com.lppaik.model.response.PagingResponse;
 import lombok.AllArgsConstructor;

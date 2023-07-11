@@ -4,8 +4,12 @@ import com.lppaik.entity.*;
 import com.lppaik.model.request.RegisterUserRequest;
 import com.lppaik.model.request.SearchUserRequest;
 import com.lppaik.model.request.UpdateUserRequest;
+import com.lppaik.model.response.BTQResponse;
+import com.lppaik.model.response.UserActivityResponse;
 import com.lppaik.model.response.UserResponse;
+import com.lppaik.repository.ActivityRepository;
 import com.lppaik.repository.BTQControlBookRepository;
+import com.lppaik.repository.BTQDetailsRepository;
 import com.lppaik.repository.UserRepository;
 import com.lppaik.security.BCrypt;
 import jakarta.persistence.criteria.Join;
@@ -23,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,13 +36,18 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final Utils utils;
   private final JurusanServiceImpl jurusanService;
+  private final BTQDetailsRepository detailsRepository;
+
+  private final ActivityRepository activityRepository;
 
   private final BTQControlBookRepository bookRepository;
 
-  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService, BTQControlBookRepository bookRepository) {
+  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService, BTQDetailsRepository detailsRepository, ActivityRepository activityRepository, BTQControlBookRepository bookRepository) {
     this.userRepository = userRepository;
     this.utils = utils;
     this.jurusanService = jurusanService;
+    this.detailsRepository = detailsRepository;
+    this.activityRepository = activityRepository;
     this.bookRepository = bookRepository;
   }
 
@@ -79,8 +89,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<UserResponse> searchUser(SearchUserRequest request) {
+  public Page<UserResponse> searchUser(User user, SearchUserRequest request) {
 
+    if (user.getRole() != Role.TUTOR
+            && user.getRole() != Role.ADMIN
+            && user.getRole() != Role.DOSEN){
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Operation is not support for you role!");
+    }
 
     Specification<User> specification = (root, query, builder) -> {
       List<Predicate> predicates = new ArrayList<>();
@@ -138,5 +153,30 @@ public class UserServiceImpl implements UserService {
     return utils.userToUserResponse(user);
   }
 
+  @Override
+  public List<UserActivityResponse> getUserActivities(User user) {
 
+    Set<Activity> activities = user.getActivities();
+
+    return activities.stream()
+            .map(activity -> UserActivityResponse.builder()
+                    .image(activity.getImage())
+                    .title(activity.getTitle())
+                    .build())
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<BTQResponse> getBTQDetails(User user) {
+
+    BTQControlBook book = bookRepository.findFirstByUserAndId(user, user.getUsername())
+            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "BTQ Book not found!"));
+
+    List<BTQDetails> details = detailsRepository.findAllByBook(book);
+
+    return details.stream()
+            .map(detail -> utils.detailToBTQResponse(detail))
+            .collect(Collectors.toList());
+  }
 }

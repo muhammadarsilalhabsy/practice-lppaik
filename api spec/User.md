@@ -1,6 +1,6 @@
 # User API spec
 
-## User Register 
+## User Register (test success)
 
 Method : POST
 
@@ -122,7 +122,37 @@ Response Failed(4xx):
 }
 ```
 
+## Get BTQ Details Current User
 
+Method : GET
+
+URL : /api/v1/users/current/btq/details
+
+Request Header :
+
+- X-API-TOKEN: "token-example" (Mandatory)
+
+Response Success(2xx):
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "activity": "example activity",
+      "day": "sunday",
+      "tutor": "219191"
+    }
+  ]
+}
+```
+
+Response Failed(4xx):
+```json
+{
+  "error": "example some error massage..."
+}
+```
 
 ## Search User
 
@@ -162,6 +192,35 @@ Response Success(2xx):
     "totalPage": 1,
     "size": 10
   }
+}
+```
+
+Response Failed(4xx):
+```json
+{
+  "error": "example some error massage..."
+}
+```
+
+## Update current user
+
+Method : PATCH
+
+URL : /api/v1/users/current
+
+Request Header :
+
+- X-API-TOKEN: "token-example" (Mandatory)
+
+Response Success(2xx):
+
+```json
+{
+  "password": "new pass example",
+  "name":"new name example",
+  "avatar": "new-img.png",
+  "email":"new@gmail.com",
+  "gender": "FEMALE"
 }
 ```
 

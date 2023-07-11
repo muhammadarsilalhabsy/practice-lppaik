@@ -1,11 +1,13 @@
 package com.lppaik.controller;
 
 import com.lppaik.entity.User;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.RegisterUserRequest;
 import com.lppaik.model.request.SearchUserRequest;
 import com.lppaik.model.request.UpdateUserRequest;
+import com.lppaik.model.response.BTQResponse;
 import com.lppaik.model.response.PagingResponse;
+import com.lppaik.model.response.UserActivityResponse;
 import com.lppaik.model.response.UserResponse;
 import com.lppaik.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class UserController {
     this.service = service;
   }
 
+  // ALL ROLE
   @PostMapping(path = "/register",
           consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE
@@ -37,6 +40,7 @@ public class UserController {
     return WebResponse.<String>builder().data("OK").build();
   };
 
+  // ALL ROLE
   @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<UserResponse> getCurrentUser(User user){
     UserResponse response = service.getCurrentUser(user);
@@ -45,8 +49,33 @@ public class UserController {
             .build();
   }
 
+  // MAHASISWA
+  @GetMapping(path = "/current/btq/details",
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<List<BTQResponse>> getBTQDetails(User user){
+
+    List<BTQResponse> responses = service.getBTQDetails(user);
+
+    return WebResponse.<List<BTQResponse>>builder()
+            .data(responses)
+            .build();
+  }
+
+  @GetMapping(path = "/current/activity/details",
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<List<UserActivityResponse>> getActivityDetails(User user){
+
+    List<UserActivityResponse> responses = service.getUserActivities(user);
+
+    return WebResponse.<List<UserActivityResponse>>builder()
+            .data(responses)
+            .build();
+  }
+
+  // TUTOR, ADMIN, DOSEN
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<List<UserResponse>> searchUser(@RequestParam(value = "identity", required = false) String identity,
+  public WebResponse<List<UserResponse>> searchUser(User user,
+                                                    @RequestParam(value = "identity", required = false) String identity,
                                                     @RequestParam(value = "jurusan", required = false) String jurusan,
                                                     @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
                                                     @RequestParam(value = "size", required = false, defaultValue = "10") Integer size){
@@ -58,7 +87,7 @@ public class UserController {
             .size(size)
             .build();
 
-    Page<UserResponse> userResponses = service.searchUser(request);
+    Page<UserResponse> userResponses = service.searchUser(user, request);
     return WebResponse.<List<UserResponse>>builder()
             .data(userResponses.getContent())
             .paging(PagingResponse.builder()
@@ -69,6 +98,7 @@ public class UserController {
             .build();
   }
 
+  // ALL ROLE
   @PatchMapping(path = "/current",
           consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)

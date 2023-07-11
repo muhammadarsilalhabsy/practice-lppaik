@@ -1,8 +1,6 @@
 package com.lppaik.model.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,17 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateBTQDetailsRequest {
+public class AddActivityToUserRequest {
 
-  @JsonIgnore
-  private Long detailId;
+  @NotBlank
+  private String activityId;
 
-  private String day;
-
-  private String activity;
-
-
-
-
-
+  @NotBlank
+  private String toUserId;
 }

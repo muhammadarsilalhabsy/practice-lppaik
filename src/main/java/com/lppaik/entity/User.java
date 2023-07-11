@@ -3,7 +3,9 @@ package com.lppaik.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,7 +39,7 @@ public class User {
   @JoinColumn(name = "jurusan_id", referencedColumnName = "id")
   private Jurusan jurusan;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @PrimaryKeyJoinColumn(name="username", referencedColumnName = "id")
   private BTQControlBook btqBook;
 
@@ -49,4 +51,11 @@ public class User {
 
   @OneToMany(mappedBy = "tutors")
   private List<BTQDetails> details;
+
+//  @ManyToMany(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.DETACH})
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "kegiatan_users",
+          joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
+          inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"))
+  private Set<Activity> activities = new HashSet<>();
 }

@@ -1,7 +1,7 @@
 package com.lppaik.controller;
 
 import com.lppaik.entity.User;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.CreateJurusanRequest;
 import com.lppaik.model.request.UpdateJurusanRequest;
 import com.lppaik.model.response.JurusanResponse;
@@ -53,16 +53,16 @@ public class JurusanController {
   @PatchMapping(path = "/{jurusanId}",
           produces = MediaType.APPLICATION_JSON_VALUE,
           consumes = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<JurusanResponse> update(User user,
+  public WebResponse<String> update(User user,
                                              @RequestBody UpdateJurusanRequest request,
                                              @PathVariable("jurusanId") String jurusanId){
 
     request.setId(jurusanId);
 
-    JurusanResponse response = service.update(user, request);
+    service.update(user, request);
 
-    return  WebResponse.<JurusanResponse>builder()
-            .data(response)
+    return  WebResponse.<String>builder()
+            .data("OK")
             .build();
   }
 

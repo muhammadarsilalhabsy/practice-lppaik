@@ -20,12 +20,9 @@ public class JurusanServiceImpl implements JurusanService {
   private final JurusanRepository repository;
   private final Utils utils;
 
-  private final UserRepository userRepository;
-
-  public JurusanServiceImpl(JurusanRepository repository, Utils utils, UserRepository userRepository) {
+  public JurusanServiceImpl(JurusanRepository repository, Utils utils) {
     this.repository = repository;
     this.utils = utils;
-    this.userRepository = userRepository;
   }
 
   @Override
@@ -71,12 +68,13 @@ public class JurusanServiceImpl implements JurusanService {
   @Override
   public void delete(User user, String jurusanId) {
 
-    if(user.getRole() != Role.TUTOR && user.getRole() != Role.ADMIN){
+    if(user.getRole() != Role.ADMIN){
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Operation is not support for you role!");
     }
 
     Jurusan jurusan = repository.findById(jurusanId)
             .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jurusan Not Found!"));
+
 
     repository.delete(jurusan);
   }
@@ -86,7 +84,7 @@ public class JurusanServiceImpl implements JurusanService {
 
     utils.validate(request);
 
-    if(user.getRole() != Role.TUTOR && user.getRole() != Role.ADMIN){
+    if(user.getRole() != Role.ADMIN){
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Operation is not support for you role!");
     }
 

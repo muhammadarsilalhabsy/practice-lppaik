@@ -1,7 +1,7 @@
 package com.lppaik.controller;
 
 import com.lppaik.entity.User;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.CreateBTQDetailsRequest;
 import com.lppaik.model.request.UpdateBTQDetailsRequest;
 import com.lppaik.model.response.BTQResponse;
@@ -9,8 +9,6 @@ import com.lppaik.service.BTQDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/btq")
@@ -23,19 +21,6 @@ public class BTQController {
     this.service = service;
   }
 
-  // MAHASISWA
-  @GetMapping(path = "/{bookId}/details",
-          consumes = MediaType.APPLICATION_JSON_VALUE,
-          produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<List<BTQResponse>> getAll(User user,
-                                               @PathVariable("bookId") String bookId){
-
-    List<BTQResponse> responses = service.getDetails(user, bookId);
-
-    return WebResponse.<List<BTQResponse>>builder()
-            .data(responses)
-            .build();
-  }
 
   // TUTOR
   @PostMapping(path = "/tutor/{mahasiswaId}/details",
@@ -51,7 +36,8 @@ public class BTQController {
   }
 
   // TUTOR
-  @DeleteMapping(path = "/tutor/{detailId}/details")
+  @DeleteMapping(path = "/tutor/{detailId}/details",
+          produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<String> delete(User user, @PathVariable("detailId") Long detailId){
 
     service.delete(user, detailId);
@@ -62,10 +48,12 @@ public class BTQController {
   }
 
   // TUTOR
-  @PatchMapping(path = "/tutor/{detailId}/details")
+  @PatchMapping(path = "/tutor/{detailId}/details",
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<BTQResponse> updateDetail(User user,
-                                             @RequestBody UpdateBTQDetailsRequest request,
-                                             @PathVariable("detailId") Long detailId){
+                                               @PathVariable("detailId") Long detailId,
+                                               @RequestBody UpdateBTQDetailsRequest request){
     request.setDetailId(detailId);
 
     BTQResponse response = service.update(user, request);

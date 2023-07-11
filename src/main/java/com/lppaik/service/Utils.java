@@ -1,7 +1,9 @@
 package com.lppaik.service;
 
+import com.lppaik.entity.Activity;
 import com.lppaik.entity.BTQDetails;
 import com.lppaik.entity.User;
+import com.lppaik.model.response.ActivityResponse;
 import com.lppaik.model.response.BTQResponse;
 import com.lppaik.model.response.UserResponse;
 import jakarta.validation.ConstraintViolation;
@@ -28,6 +30,18 @@ public class Utils {
     if (constraintViolations.size() != 0){
       throw new ConstraintViolationException(constraintViolations);
     }
+  }
+
+  public ActivityResponse activityToActivityResponse(Activity activity){
+    return ActivityResponse.builder()
+            .id(activity.getId())
+            .link(activity.getLink())
+            .time(activity.getTime())
+            .title(activity.getTitle())
+            .image(activity.getImage())
+            .location(activity.getLocation())
+            .description(activity.getDescription())
+            .build();
   }
 
   public UserResponse userToUserResponse(User user){

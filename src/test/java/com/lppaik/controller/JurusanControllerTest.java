@@ -1,21 +1,19 @@
 package com.lppaik.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lppaik.entity.Gender;
 import com.lppaik.entity.Jurusan;
 import com.lppaik.entity.Role;
 import com.lppaik.entity.User;
-import com.lppaik.model.ErrorResponse;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.ErrorResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.CreateJurusanRequest;
 import com.lppaik.model.request.UpdateJurusanRequest;
 import com.lppaik.model.response.JurusanResponse;
 import com.lppaik.repository.JurusanRepository;
 import com.lppaik.repository.UserRepository;
 import com.lppaik.security.BCrypt;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -89,16 +85,16 @@ class JurusanControllerTest {
   @Test
   void createSuccess() throws Exception {
 
-    User tutor = new User();
-    tutor.setName("Ucok");
-    tutor.setEmail("tutor@gmail.com");
-    tutor.setUsername("1010");
-    tutor.setPassword("rahasia");
-    tutor.setToken("tutor-token");
-    tutor.setGender(Gender.MALE);
-    tutor.setRole(Role.TUTOR);
+    User admin = new User();
+    admin.setName("Ucok");
+    admin.setEmail("admin@gmail.com");
+    admin.setUsername("1010");
+    admin.setPassword("rahasia");
+    admin.setToken("admin-token");
+    admin.setGender(Gender.MALE);
+    admin.setRole(Role.ADMIN);
 
-    repository.save(tutor);
+    repository.save(admin);
 
     CreateJurusanRequest request = new CreateJurusanRequest();
     request.setName("TEKNIK");
@@ -109,7 +105,7 @@ class JurusanControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(request))
-                            .header("X-API-TOKEN", "tutor-token"))
+                            .header("X-API-TOKEN", "admin-token"))
             .andExpectAll(
                     status().isOk())
             .andDo(result -> {
@@ -202,22 +198,22 @@ class JurusanControllerTest {
   @Test
   void deleteSuccess() throws Exception {
 
-    User tutor = new User();
-    tutor.setName("Ucok");
-    tutor.setEmail("tutor@gmail.com");
-    tutor.setUsername("1010");
-    tutor.setPassword("rahasia");
-    tutor.setToken("tutor-token");
-    tutor.setGender(Gender.MALE);
-    tutor.setRole(Role.TUTOR);
+    User admin = new User();
+    admin.setName("Ucok");
+    admin.setEmail("admin@gmail.com");
+    admin.setUsername("1010");
+    admin.setPassword("rahasia");
+    admin.setToken("admin-token");
+    admin.setGender(Gender.MALE);
+    admin.setRole(Role.TUTOR);
 
-    repository.save(tutor);
+    repository.save(admin);
 
     mvc.perform(
                     delete("/api/v1/jurusan/j2")
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-API-TOKEN", "tutor-token"))
+                            .header("X-API-TOKEN", "admin-token"))
             .andExpectAll(
                     status().isOk())
             .andDo(result -> {
@@ -265,22 +261,22 @@ class JurusanControllerTest {
   @Test
   void deleteJurusanNotFound() throws Exception {
 
-    User tutor = new User();
-    tutor.setName("Ucok");
-    tutor.setEmail("tutor@gmail.com");
-    tutor.setUsername("1010");
-    tutor.setPassword("rahasia");
-    tutor.setToken("tutor-token");
-    tutor.setGender(Gender.MALE);
-    tutor.setRole(Role.TUTOR);
+    User admin = new User();
+    admin.setName("Ucok");
+    admin.setEmail("admin@gmail.com");
+    admin.setUsername("1010");
+    admin.setPassword("rahasia");
+    admin.setToken("admin-token");
+    admin.setGender(Gender.MALE);
+    admin.setRole(Role.TUTOR);
 
-    repository.save(tutor);
+    repository.save(admin);
 
     mvc.perform(
                     delete("/api/v1/jurusan/j5")
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-API-TOKEN", "tutor-token"))
+                            .header("X-API-TOKEN", "admin-token"))
             .andExpectAll(
                     status().isNotFound())
             .andDo(result -> {
@@ -296,16 +292,16 @@ class JurusanControllerTest {
   @Test
   void updateSuccess() throws Exception {
 
-    User tutor = new User();
-    tutor.setName("Ucok");
-    tutor.setEmail("tutor@gmail.com");
-    tutor.setUsername("1010");
-    tutor.setPassword("rahasia");
-    tutor.setToken("tutor-token");
-    tutor.setGender(Gender.MALE);
-    tutor.setRole(Role.TUTOR);
+    User admin = new User();
+    admin.setName("Ucok");
+    admin.setEmail("admin@gmail.com");
+    admin.setUsername("1010");
+    admin.setPassword("rahasia");
+    admin.setToken("admin-token");
+    admin.setGender(Gender.MALE);
+    admin.setRole(Role.TUTOR);
 
-    repository.save(tutor);
+    repository.save(admin);
 
     UpdateJurusanRequest request = new UpdateJurusanRequest();
     request.setName("PERKAPALAN");
@@ -314,7 +310,7 @@ class JurusanControllerTest {
                     patch("/api/v1/jurusan/j2")
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-API-TOKEN", "tutor-token")
+                            .header("X-API-TOKEN", "admin-token")
                             .content(mapper.writeValueAsString(request)))
             .andExpectAll(
                     status().isOk())
@@ -389,16 +385,16 @@ class JurusanControllerTest {
 
   @Test
   void updateNotFound() throws Exception {
-    User tutor = new User();
-    tutor.setName("Ucok");
-    tutor.setEmail("tutor@gmail.com");
-    tutor.setUsername("1010");
-    tutor.setPassword("rahasia");
-    tutor.setToken("tutor-token");
-    tutor.setGender(Gender.MALE);
-    tutor.setRole(Role.TUTOR);
+    User admin = new User();
+    admin.setName("Ucok");
+    admin.setEmail("admin@gmail.com");
+    admin.setUsername("1010");
+    admin.setPassword("rahasia");
+    admin.setToken("admin-token");
+    admin.setGender(Gender.MALE);
+    admin.setRole(Role.TUTOR);
 
-    repository.save(tutor);
+    repository.save(admin);
 
     UpdateJurusanRequest request = new UpdateJurusanRequest();
     request.setName("PERKAPALAN");
@@ -408,7 +404,7 @@ class JurusanControllerTest {
                       .accept(MediaType.APPLICATION_JSON)
                       .contentType(MediaType.APPLICATION_JSON)
                       .content(mapper.writeValueAsString(request))
-                      .header("X-API-TOKEN", "tutor-token"))
+                      .header("X-API-TOKEN", "admin-token"))
       .andExpectAll(
               status().isNotFound())
       .andDo(result -> {

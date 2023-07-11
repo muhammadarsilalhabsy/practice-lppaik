@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface BTQDetailsService {
 
-  List<BTQResponse> getDetails(User user, String bookId);
 
   void createForMahasiswa(User user, CreateBTQDetailsRequest request, String forMahasiswaId);
 

@@ -2,8 +2,8 @@ package com.lppaik.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lppaik.model.ErrorResponse;
-import com.lppaik.model.WebResponse;
+import com.lppaik.model.response.ErrorResponse;
+import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.LoginUserRequest;
 import com.lppaik.model.response.TokenResponse;
 import com.lppaik.repository.JurusanRepository;

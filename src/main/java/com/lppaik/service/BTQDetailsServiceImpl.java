@@ -10,6 +10,7 @@ import com.lppaik.model.response.BTQResponse;
 import com.lppaik.repository.BTQControlBookRepository;
 import com.lppaik.repository.BTQDetailsRepository;
 import com.lppaik.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class BTQDetailsServiceImpl implements BTQDetailsService {
 
   private final BTQControlBookRepository bookRepository;
@@ -42,19 +44,7 @@ public class BTQDetailsServiceImpl implements BTQDetailsService {
     this.utils = utils;
   }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<BTQResponse> getDetails(User user, String bookId) {
 
-    BTQControlBook book = bookRepository.findFirstByUserAndId(user, bookId)
-            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "BTQ Book not found!"));
-
-    List<BTQDetails> details = detailsRepository.findAllByBook(book);
-
-    return details.stream()
-            .map(detail -> utils.detailToBTQResponse(detail))
-            .collect(Collectors.toList());
-  }
 
   @Override
   @Transactional
@@ -102,6 +92,8 @@ public class BTQDetailsServiceImpl implements BTQDetailsService {
   @Override
   @Transactional
   public BTQResponse update(User user, UpdateBTQDetailsRequest request) {
+
+    log.info("detail id = {}", request.getDetailId());
 
     utils.validate(request);
 

@@ -1,6 +1,6 @@
 package com.lppaik.controller;
 
-import com.lppaik.model.ErrorResponse;
+import com.lppaik.model.response.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
