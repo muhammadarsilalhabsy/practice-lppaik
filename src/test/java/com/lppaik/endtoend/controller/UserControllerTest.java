@@ -3,15 +3,9 @@ package com.lppaik.endtoend.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lppaik.entity.*;
-import com.lppaik.model.response.ErrorResponse;
-import com.lppaik.model.response.WebResponse;
+import com.lppaik.model.response.*;
 import com.lppaik.model.request.UpdateUserRequest;
-import com.lppaik.model.response.BTQResponse;
-import com.lppaik.model.response.UserResponse;
-import com.lppaik.repository.BTQControlBookRepository;
-import com.lppaik.repository.BTQDetailsRepository;
-import com.lppaik.repository.JurusanRepository;
-import com.lppaik.repository.UserRepository;
+import com.lppaik.repository.*;
 import com.lppaik.security.BCrypt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,20 +37,24 @@ public class UserControllerTest {
   private final BTQControlBookRepository bookRepository;
 
   private final BTQDetailsRepository btqDetailsRepository;
+  private final ActivityRepository activityRepository;
 
   @Autowired
-  public UserControllerTest(ObjectMapper mapper, MockMvc mvc, JurusanRepository jurusanRepository, UserRepository userRepository, BTQControlBookRepository bookRepository, BTQDetailsRepository btqDetailsRepository) {
+  public UserControllerTest(ObjectMapper mapper, MockMvc mvc, JurusanRepository jurusanRepository, UserRepository userRepository, BTQControlBookRepository bookRepository, BTQDetailsRepository btqDetailsRepository, ActivityRepository activityRepository) {
     this.mapper = mapper;
     this.mvc = mvc;
     this.jurusanRepository = jurusanRepository;
     this.userRepository = userRepository;
     this.bookRepository = bookRepository;
     this.btqDetailsRepository = btqDetailsRepository;
+    this.activityRepository = activityRepository;
   }
 
   @BeforeEach
   void setUp() {
 
+    btqDetailsRepository.deleteAll();
+    bookRepository.deleteAll();
     userRepository.deleteAll();
     jurusanRepository.deleteAll();
 
@@ -69,6 +67,17 @@ public class UserControllerTest {
 
     jurusanRepository.save(jurusan);
 
+    Activity a2 = new Activity();
+    a2.setDescription("test ini tentang bla bla bla 2");
+    a2.setTitle("test kegiatan 2");
+    a2.setImage("test-kegiatan.png 2");
+    a2.setTime("test siang 2");
+    a2.setLink("test kegiatan 2");
+    a2.setLocation("test kegiatan 2");
+    a2.setId("atest1");
+
+    activityRepository.save(a2);
+
     User mahasiswa = new User();
     mahasiswa.setUsername("test-id");
     mahasiswa.setJurusan(jurusan);
@@ -79,8 +88,15 @@ public class UserControllerTest {
     mahasiswa.setPassword(BCrypt.hashpw("secret123", BCrypt.gensalt()));
     mahasiswa.setToken("test-token");
     mahasiswa.setTokenExpiredAt(100000L);
+    mahasiswa.getActivities().add(a2);
 
     userRepository.save(mahasiswa);
+
+    BTQControlBook book = new BTQControlBook();
+    book.setStatus(false);
+    book.setId("test-id");
+
+    bookRepository.save(book);
 
     User dosen = new User();
     dosen.setUsername("dosen-id");
@@ -109,6 +125,27 @@ public class UserControllerTest {
     userRepository.save(tutor);
   }
 
+  @Test
+  void testGetDetailsCurrentActivityUserSuccess() throws Exception{
+
+    User mhs = userRepository.findById("test-id").orElseThrow();
+
+    mvc.perform(
+            get("/api/v1/users/current/activity/details")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("X-API-TOKEN", mhs.getToken())
+    ).andExpectAll(
+            status().isOk()
+    ).andExpectAll(result -> {
+      WebResponse<List<UserActivityResponse>> response = mapper.readValue(result.getResponse().getContentAsString(),
+              new TypeReference<>() {
+              });
+
+      assertEquals(1, response.getData().size());
+
+    });
+  }
   @Test
   void testGetListBTQDetailsCurrentUserSuccess() throws Exception{
 

@@ -6,6 +6,7 @@ import com.lppaik.entity.*;
 import com.lppaik.model.request.UpdateActivityRequest;
 import com.lppaik.model.response.ActivityResponse;
 import com.lppaik.model.response.ErrorResponse;
+import com.lppaik.model.response.UserActivityResponse;
 import com.lppaik.model.response.WebResponse;
 import com.lppaik.model.request.CreateActivityRequest;
 import com.lppaik.repository.*;
