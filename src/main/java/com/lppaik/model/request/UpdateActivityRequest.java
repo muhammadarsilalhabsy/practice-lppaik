@@ -18,13 +18,12 @@ public class UpdateActivityRequest {
   @JsonIgnore
   @NotBlank
   private String activityId;
-
   private String title;
-
   private String image;
-
   private String location;
   private String description;
   private String link;
   private String time;
+  private String date;
+  private String color;
 }

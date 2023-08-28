@@ -12,6 +12,7 @@ import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,10 +34,22 @@ public class Utils {
   }
 
   public ActivityResponse activityToActivityResponse(Activity activity){
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd LLLL yyy");
+    DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE");
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_TIME;
+
+    String date = activity.getDate().format(dateFormatter);
+    String time = activity.getTime().format(timeFormatter);
+    String day = activity.getDate().format(dayFormatter);
+
+
     return ActivityResponse.builder()
             .id(activity.getId())
             .link(activity.getLink())
-            .time(activity.getTime())
+            .time(time)
+            .date(date)
+            .day(day)
+            .color(activity.getColor())
             .title(activity.getTitle())
             .image(activity.getImage())
             .location(activity.getLocation())

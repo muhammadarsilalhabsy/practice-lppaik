@@ -25,5 +25,7 @@ public class CreateActivityRequest {
   private String description;
   private String link;
   private String time;
+  private String date;
+  private String color;
 
 }

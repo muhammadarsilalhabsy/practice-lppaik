@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -71,7 +73,9 @@ public class UserControllerTest {
     a2.setDescription("test ini tentang bla bla bla 2");
     a2.setTitle("test kegiatan 2");
     a2.setImage("test-kegiatan.png 2");
-    a2.setTime("test siang 2");
+    a2.setTime(LocalTime.now());
+    a2.setDate(LocalDate.now());
+    a2.setColor("bg-sky-400");
     a2.setLink("test kegiatan 2");
     a2.setLocation("test kegiatan 2");
     a2.setId("atest1");

@@ -5,7 +5,6 @@ import com.lppaik.entity.Role;
 import com.lppaik.entity.User;
 import com.lppaik.model.request.*;
 import com.lppaik.model.response.ActivityResponse;
-import com.lppaik.model.response.UserResponse;
 import com.lppaik.repository.ActivityRepository;
 import com.lppaik.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
@@ -20,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,7 +82,10 @@ public class ActivityServiceImpl implements ActivityService {
     activity.setLink(request.getLink());
     activity.setLocation(request.getLocation());
     activity.setDescription(request.getDescription());
-    activity.setTime(request.getTime());
+
+    activity.setTime(LocalTime.parse(request.getTime()));
+    activity.setColor(request.getColor());
+    activity.setDate(LocalDate.parse(request.getDate()));
 
     activityRepository.save(activity);
   }
@@ -142,10 +146,17 @@ public class ActivityServiceImpl implements ActivityService {
       currentActivity.setLocation(request.getLocation());
     }
 
-    if(Objects.nonNull(request.getTime())){
-      currentActivity.setTime(request.getTime());
+    if(Objects.nonNull(request.getColor())){
+      currentActivity.setColor(request.getColor());
     }
 
+    if(Objects.nonNull(request.getTime())){
+      currentActivity.setTime(LocalTime.parse(request.getTime()));
+    }
+
+    if(Objects.nonNull(request.getDate())){
+      currentActivity.setDate(LocalDate.parse(request.getDate()));
+    }
     activityRepository.save(currentActivity);
 
   }

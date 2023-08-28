@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -83,7 +85,9 @@ public class ActivityControllerTest {
     activity.setDescription("kegiatan ini tentang bla bla bla 2");
     activity.setTitle("judul kegiatan 2");
     activity.setImage("poster-kegiatan.png 2");
-    activity.setTime("waktu siang 2");
+    activity.setTime(LocalTime.now());
+    activity.setDate(LocalDate.now());
+    activity.setColor("bg-sky-400");
     activity.setLink("link kegiatan 2");
     activity.setLocation("tempat kegiatan 2");
     activity.setId("a0002");
@@ -94,7 +98,9 @@ public class ActivityControllerTest {
     a2.setDescription("test ini tentang bla bla bla 2");
     a2.setTitle("test kegiatan 2");
     a2.setImage("test-kegiatan.png 2");
-    a2.setTime("test siang 2");
+    a2.setTime(LocalTime.now());
+    a2.setDate(LocalDate.now());
+    a2.setColor("bg-sky-400");
     a2.setLink("test kegiatan 2");
     a2.setLocation("test kegiatan 2");
     a2.setId("atest1");
@@ -250,7 +256,9 @@ public class ActivityControllerTest {
     request.setTitle("new title req");
     request.setDescription("new desc req");
     request.setLink("new-link-req.html");
-    request.setTime("Thursday");
+    request.setTime("20:19");
+    request.setDate("2001-09-02");
+    request.setColor("bg-sky-400");
     request.setImage("new-banner.png");
     request.setLocation("Bat bat");
 
@@ -519,7 +527,9 @@ public class ActivityControllerTest {
     request.setDescription("long desc ");
     request.setTitle("simple title");
     request.setImage("simple-img.png ");
-    request.setTime("morning");
+    request.setTime("20:19");
+    request.setDate("2001-09-02");
+    request.setColor("bg-sky-400");
     request.setLink("link.html");
     request.setLocation("my location");
 
@@ -551,7 +561,9 @@ public class ActivityControllerTest {
     request.setDescription("long desc ");
     request.setTitle("simple title");
     request.setImage("simple-img.png ");
-    request.setTime("morning");
+    request.setTime("20:19");
+    request.setDate("2001-09-02");
+    request.setColor("bg-sky-400");
     request.setLink("link.html");
     request.setLocation("my location");
 
@@ -580,7 +592,9 @@ public class ActivityControllerTest {
     request.setDescription("long desc ");
     request.setTitle("simple title");
     request.setImage("simple-img.png ");
-    request.setTime("morning");
+    request.setTime("20:19");
+    request.setDate("2001-09-02");
+    request.setColor("bg-sky-400");
     request.setLink("link.html");
     request.setLocation("my location");
 

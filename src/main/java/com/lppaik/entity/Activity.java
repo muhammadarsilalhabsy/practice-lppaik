@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,13 +28,17 @@ public class Activity {
   @Column(nullable = false)
   private String image;
 
+  private String color;
+
   private String location;
 
   private String description;
 
   private String link;
 
-  private String time;
+  private LocalDate date;
+
+  private LocalTime time;
 
 //  @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 //  @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.DETACH})
