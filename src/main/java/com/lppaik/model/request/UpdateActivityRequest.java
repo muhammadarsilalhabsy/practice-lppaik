@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -18,8 +19,10 @@ public class UpdateActivityRequest {
   @JsonIgnore
   @NotBlank
   private String activityId;
+
   private String title;
-  private String image;
+
+  private MultipartFile image;
   private String location;
   private String description;
   private String link;

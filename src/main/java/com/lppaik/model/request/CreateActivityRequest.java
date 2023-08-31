@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -17,8 +18,7 @@ public class CreateActivityRequest {
   @Size(max = 200)
   private String title;
 
-  @NotBlank
-  private String image;
+  private MultipartFile image;
 
   @Size(max = 200)
   private String location;

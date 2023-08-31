@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -49,9 +51,27 @@ public class ActivityController {
   }
 
   // ADMIN ONLY
-  @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-          consumes = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> create(User user, @RequestBody CreateActivityRequest request){
+  @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> create(User user,
+                                    @RequestParam("title") String title,
+                                    @RequestParam("image") MultipartFile image,
+                                    @RequestParam("location") String location,
+                                    @RequestParam("description") String description,
+                                    @RequestParam("link") String link,
+                                    @RequestParam("time") String time,
+                                    @RequestParam("date") String date,
+                                    @RequestParam("color") String color) throws IOException {
+
+    CreateActivityRequest request = CreateActivityRequest.builder()
+            .title(title)
+            .image(image)
+            .location(location)
+            .description(description)
+            .link(link)
+            .time(time)
+            .date(date)
+            .color(color)
+            .build();
 
     service.create(user, request);
     return WebResponse.<String>builder().data("OK").build();
@@ -74,11 +94,28 @@ public class ActivityController {
 
   // ADMIN ONLY
   @PatchMapping(path = "/{activityId}",
-          produces = MediaType.APPLICATION_JSON_VALUE,
-          consumes = MediaType.APPLICATION_JSON_VALUE)
+          produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<String> updateActivity(User user,
-                                            @PathVariable("activityId") String activityId,
-                                            @RequestBody UpdateActivityRequest request){
+                                            @PathVariable( value = "activityId") String activityId,
+                                            @RequestParam( value = "title", required = false) String title,
+                                            @RequestParam( value = "image", required = false) MultipartFile image,
+                                            @RequestParam( value = "location", required = false) String location,
+                                            @RequestParam( value = "description", required = false) String description,
+                                            @RequestParam( value = "link", required = false) String link,
+                                            @RequestParam( value = "time", required = false) String time,
+                                            @RequestParam( value = "date", required = false) String date,
+                                            @RequestParam( value = "color", required = false) String color) throws IOException {
+
+    UpdateActivityRequest request = UpdateActivityRequest.builder()
+            .title(title)
+            .image(image)
+            .location(location)
+            .description(description)
+            .link(link)
+            .time(time)
+            .date(date)
+            .color(color)
+            .build();
 
     request.setActivityId(activityId);
     service.update(user, request);

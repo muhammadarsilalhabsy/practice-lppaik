@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -30,11 +31,14 @@ public class ActivityServiceImpl implements ActivityService {
   private final ActivityRepository activityRepository;
   private final Utils utils;
 
+  private final ImageServiceImpl imageService;
+
   private final UserRepository userRepository;
 
   @Autowired
-  public ActivityServiceImpl(ActivityRepository activityRepository, Utils utils, UserRepository userRepository) {
+  public ActivityServiceImpl(ActivityRepository activityRepository, Utils utils, ImageServiceImpl imageService, UserRepository userRepository) {
     this.activityRepository = activityRepository;
+    this.imageService = imageService;
     this.userRepository = userRepository;
     this.utils = utils;
   }
@@ -67,7 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   @Transactional
-  public void create(User user, CreateActivityRequest request) {
+  public void create(User user, CreateActivityRequest request) throws IOException {
 
     utils.validate(request);
 
@@ -78,7 +82,7 @@ public class ActivityServiceImpl implements ActivityService {
     Activity activity = new Activity();
     activity.setId(UUID.randomUUID().toString());
     activity.setTitle(request.getTitle());
-    activity.setImage(request.getImage());
+    activity.setImage(imageService.saveImageToDb(request.getImage()));
     activity.setLink(request.getLink());
     activity.setLocation(request.getLocation());
     activity.setDescription(request.getDescription());
@@ -115,7 +119,7 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   @Transactional
-  public void update(User user, UpdateActivityRequest request) {
+  public void update(User user, UpdateActivityRequest request) throws IOException {
 
     utils.validate(request);
 
@@ -135,7 +139,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     if(Objects.nonNull(request.getImage())){
-      currentActivity.setImage(request.getImage());
+      currentActivity.setImage(imageService.saveImageToDb(request.getImage()));
     }
 
     if(Objects.nonNull(request.getLink())){
