@@ -338,7 +338,7 @@ public class UserControllerTest {
 
     UpdateUserRequest request = new UpdateUserRequest();
     request.setPassword("new pass");
-    request.setAvatar("new-image.png");
+//    request.setAvatar("new-image.png");
     request.setEmail("new@gmail.com");
     request.setGender("FEMALE");
     request.setName("new otong");
@@ -360,7 +360,7 @@ public class UserControllerTest {
 
       assertEquals(request.getName(), response.getData().getName());
       assertEquals(request.getEmail(), response.getData().getEmail());
-      assertEquals(request.getAvatar(), response.getData().getAvatar());
+//      assertEquals(request.getAvatar(), response.getData().getAvatar());
       assertEquals(Gender.FEMALE.name(), response.getData().getGender());
       assertTrue(BCrypt.checkpw(request.getPassword(), userFromDB.getPassword()));
     });
@@ -371,7 +371,7 @@ public class UserControllerTest {
 
     UpdateUserRequest request = new UpdateUserRequest();
     request.setPassword("new pass");
-    request.setAvatar("new-image.png");
+//    request.setAvatar("new-image.png");
     request.setEmail("new@gmail.com");
     request.setGender("FEMALE");
     request.setName("new otong");

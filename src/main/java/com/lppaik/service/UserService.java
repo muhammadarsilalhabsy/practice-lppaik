@@ -9,7 +9,9 @@ import com.lppaik.model.response.BTQResponse;
 import com.lppaik.model.response.UserActivityResponse;
 import com.lppaik.model.response.UserResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -26,5 +28,7 @@ public interface UserService {
   List<UserActivityResponse> getUserActivities(User user);
 
   List<BTQResponse> getBTQDetails(User user);
+
+  void updateUserAvatar(User user, MultipartFile file) throws IOException;
 
 }

@@ -7,7 +7,6 @@ import com.lppaik.model.request.UpdateUserRequest;
 import com.lppaik.model.response.BTQResponse;
 import com.lppaik.model.response.UserActivityResponse;
 import com.lppaik.model.response.UserResponse;
-import com.lppaik.repository.ActivityRepository;
 import com.lppaik.repository.BTQControlBookRepository;
 import com.lppaik.repository.BTQDetailsRepository;
 import com.lppaik.repository.UserRepository;
@@ -22,8 +21,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,17 +39,17 @@ public class UserServiceImpl implements UserService {
   private final JurusanServiceImpl jurusanService;
   private final BTQDetailsRepository detailsRepository;
 
-  private final ActivityRepository activityRepository;
-
   private final BTQControlBookRepository bookRepository;
 
-  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService, BTQDetailsRepository detailsRepository, ActivityRepository activityRepository, BTQControlBookRepository bookRepository) {
+  private final ImageServiceImpl imageService;
+
+  public UserServiceImpl(UserRepository userRepository, Utils utils, JurusanServiceImpl jurusanService, BTQDetailsRepository detailsRepository, BTQControlBookRepository bookRepository, ImageServiceImpl imageService) {
     this.userRepository = userRepository;
     this.utils = utils;
     this.jurusanService = jurusanService;
     this.detailsRepository = detailsRepository;
-    this.activityRepository = activityRepository;
     this.bookRepository = bookRepository;
+    this.imageService = imageService;
   }
 
   @Override
@@ -142,10 +143,6 @@ public class UserServiceImpl implements UserService {
       user.setEmail(request.getEmail());
     }
 
-    if(Objects.nonNull(request.getAvatar())){
-      user.setAvatar(request.getAvatar());
-    }
-
     if(Objects.nonNull(request.getGender())){
       user.setGender(Gender.valueOf(request.getGender()));
     }
@@ -178,5 +175,11 @@ public class UserServiceImpl implements UserService {
     return details.stream()
             .map(detail -> utils.detailToBTQResponse(detail))
             .collect(Collectors.toList());
+  }
+
+  @Override
+  public void updateUserAvatar(User user, MultipartFile file) throws IOException {
+    user.setAvatar(imageService.saveImageToDb(file));
+    userRepository.save(user);
   }
 }

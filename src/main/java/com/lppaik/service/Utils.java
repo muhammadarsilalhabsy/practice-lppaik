@@ -11,10 +11,16 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Set;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 @Service
 public class Utils {
@@ -34,9 +40,9 @@ public class Utils {
   }
 
   public ActivityResponse activityToActivityResponse(Activity activity){
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd LLLL yyy");
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
     DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE");
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_TIME;
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
 
     String date = activity.getDate().format(dateFormatter);
     String time = activity.getTime().format(timeFormatter);
@@ -80,5 +86,57 @@ public class Utils {
             .activity(detail.getActivity())
             .tutor(detail.getTutors().getName())
             .build();
+  }
+
+  public static byte[] compressImage(byte[] data) {
+    Deflater deflater = new Deflater();
+
+    deflater.setLevel(Deflater.BEST_COMPRESSION);
+    deflater.setInput(data);
+    deflater.finish();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+    byte[] temp = new byte[4 * 1024];
+
+    while (!deflater.finished()) {
+      int size = deflater.deflate(temp);
+      outputStream.write(temp, 0, size);
+    }
+
+    try {
+      outputStream.close();
+    } catch (Exception ignore) {
+    }
+
+    return outputStream.toByteArray();
+
+  }
+
+  public static byte[] decompressImage(byte[] data) {
+    Inflater inflater = new Inflater();
+    inflater.setInput(data);
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+    byte[] temp = new byte[4 * 1024];
+
+    try {
+      while (!inflater.finished()) {
+        int count = inflater.inflate(temp);
+        outputStream.write(temp, 0, count);
+      }
+      outputStream.close();
+    } catch (Exception ignore) {
+    }
+    return outputStream.toByteArray();
+  }
+
+  public static String nameConversion(MultipartFile file){
+    LocalDate date = LocalDate.now();
+    LocalTime time = LocalTime.now();
+
+    String tanggal = date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    String jam = time.format(DateTimeFormatter.ofPattern("HH-mm"));
+
+    return tanggal + "-" + jam + "-" + Objects.requireNonNull(file.getOriginalFilename()).replaceAll("\\s","-");
   }
 }

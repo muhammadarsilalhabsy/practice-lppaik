@@ -19,9 +19,6 @@ public class UpdateUserRequest {
   @Size(max = 200)
   private String name;
 
-  @Size(max = 255)
-  private String avatar;
-
   @Email
   private String email;
 
